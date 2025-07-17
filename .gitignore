@@ -1,0 +1,59 @@
+# Python 虚拟环境
+venv/
+.env
+.venv
+env/
+
+# Python 字节码文件
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 分发/打包
+.Python
+build/
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 测试/覆盖率报告
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+
+# Flask 相关
+instance/
+.webassets-cache
+
+# Vue 前端构建文件
+frontend/dist/
+frontend/node_modules/
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# IDE 配置文件
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# 日志文件
+logs/
+*.log
+
+# 系统临时文件
+Thumbs.db
+
+# Trae IDE 配置
+.trae/
