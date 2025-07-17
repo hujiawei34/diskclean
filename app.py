@@ -4,6 +4,7 @@ import os
 import logging
 from datetime import datetime
 import pytz
+import math
 
 # 配置日志时区为北京时间
 logging.Formatter.converter = lambda *args: datetime.now(pytz.timezone('Asia/Shanghai')).timetuple()
@@ -53,7 +54,25 @@ def api_partitions():
     """
     API接口：获取所有磁盘分区信息
     """
-    partitions = DiskAnalyzer.get_disk_partitions()
+    partitions = []
+    for part in psutil.disk_partitions():
+        try:
+            if 'cdrom' in part.opts or part.fstype == '':
+                continue
+            usage = psutil.disk_usage(part.mountpoint)
+            partitions.append({
+                'device': part.device,
+                'mountpoint': part.mountpoint,
+                'fstype': part.fstype,
+                'total': usage.total,
+                'used': usage.used,
+                'free': usage.free,
+                'percent': usage.percent
+            })
+        except PermissionError:
+            continue
+        except OSError:
+            continue
     return jsonify(partitions)
 
 @app.route('/api/disk_usage/<path:mountpoint>')
@@ -63,8 +82,13 @@ def api_disk_usage(mountpoint):
     :param mountpoint: 磁盘挂载点路径
     """
     try:
-        usage = DiskAnalyzer.get_disk_usage(mountpoint)
-        return jsonify(usage)
+        usage = psutil.disk_usage(mountpoint)
+        return jsonify({
+            'total': usage.total,
+            'used': usage.used,
+            'free': usage.free,
+            'percent': usage.percent
+        })
     except PermissionError:
         return jsonify({'error': '没有权限访问此分区'}), 403
     except Exception as e:
@@ -82,7 +106,16 @@ def api_directory_list(mountpoint):
         for entry in os.scandir(mountpoint):
             if entry.is_dir(follow_symlinks=False) and not entry.name.startswith('.'):
                 try:
-                    size, file_count = DiskAnalyzer.get_directory_size(entry.path)
+                    size = 0
+                    file_count = 0
+                    for dirpath, dirnames, filenames in os.walk(entry.path):
+                        for f in filenames:
+                            fp = os.path.join(dirpath, f)
+                            try:
+                                size += os.path.getsize(fp)
+                                file_count += 1
+                            except (OSError, PermissionError):
+                                continue
                     directories.append({
                         'name': entry.name,
                         'path': entry.path,

@@ -43,7 +43,8 @@ fi
 # 启动Flask应用并将所有输出重定向到日志
  echo "[INFO] 启动应用程序..."
  exec > "$logs_dir/app.log" 2>&1
- python "$project_dir/app.py" &
+ cd $project_dir
+ python "app.py" &
  app_pid=$!
 
 # 检查应用是否成功启动

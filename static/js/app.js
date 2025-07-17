@@ -1,6 +1,6 @@
 /**
  * DiskClean 前端应用逻辑
- * 负责与后端API交互、数据处理和页面渲染
+ * @description 负责与后端API交互、数据处理和页面渲染
  */
 new Vue({
     el: '#app',
@@ -18,7 +18,7 @@ new Vue({
     methods: {
         /**
          * 获取系统磁盘分区列表
-         * 从后端API获取并更新drives数据
+         * @description 从后端API获取并更新drives数据
          */
         async getDrives() {
             try {
@@ -42,7 +42,7 @@ new Vue({
 
         /**
          * 获取选定分区的目录大小信息
-         * 从后端API获取并按大小排序目录数据
+         * @description 从后端API获取并按大小排序目录数据
          */
         async getDirectorySizes() {
             if (!this.selectedDrive) return;
